@@ -139,10 +139,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Ant.cpp" />
     <ClCompile Include="Graph.cpp" />
     <ClCompile Include="kpi_pa_3.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Ant.h" />
     <ClInclude Include="Graph.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
