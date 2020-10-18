@@ -2,10 +2,12 @@
 #include <vector>
 #include <cmath>
 #include "Graph.h"
+#include "Ant.h"
 
 using namespace std;
 
 #define defFile "matrix.txt"
+#define defPheromone 1
 
 #define defA 1
 #define defB 1
@@ -18,6 +20,6 @@ int main()
 {
 	//Choosing a parameter to test
 	auto testParam = defA;
-	Graph graph(defFile);
-	vector < vector <int> > pheromone(6, std::vector<int>(6, 1));
+	Graph graph(defFile,defPheromone);
+	vector<Ant> allAnts(defAnt);
 }

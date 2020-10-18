@@ -12,8 +12,8 @@ private:
 	int _size;
 public:
 	int** adj;
-	vector<int> pow;
-	Graph(string path);
+	double** pheromone;
+	Graph(string path,double _pheromone);
 	~Graph();
 	int size();
 };

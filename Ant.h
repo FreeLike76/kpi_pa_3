@@ -1,15 +1,18 @@
 #pragma once
 #include <vector>
-
+#include "Graph.h"
 using namespace std;
 
 class Ant
 {
+	int _pathLen=0;
 public:
-	vector<bool> vertAvalivle;
 	vector<int> pathHist;
-	Ant(int size);
-	void clearMemory();
+
 	~Ant();
+
+	void calcAntPath(Graph& graph);
+	int getPathLen();
+	void clearMemory();
 };
 

@@ -1,6 +1,6 @@
 #include "Graph.h"
 
-Graph::Graph(string path)
+Graph::Graph(string path, double _pheromone)
 {
 
 	ifstream input;
@@ -8,17 +8,18 @@ Graph::Graph(string path)
 	input >> _size;
 
 	adj = new int* [_size];
-	pow.resize(_size, 0);
+	pheromone = new double* [_size];
 
 	for (int i = 0; i < _size; i++)
 	{
 		adj[i] = new int[_size];
+		pheromone[i] = new double[_size];
 		for (int j = 0; j < _size; j++)
 		{
 			input >> adj[i][j];
-			if (adj[i][j] == 1)
-				pow[i]++;
+			pheromone[i][j] = _pheromone;
 		}
+		pheromone[i][i] = 0;
 	}
 	input.close();
 }
@@ -28,10 +29,12 @@ Graph::~Graph()
 	for (int i = 0; i < _size; i++)
 	{
 		delete[] adj[i];
+		delete[] pheromone[i];
 	}
 	delete[] adj;
+	delete[] pheromone;
 	adj = nullptr;
-	pow.clear();
+	pheromone = nullptr;
 }
 
 int Graph::size()

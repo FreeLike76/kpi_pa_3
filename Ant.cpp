@@ -1,13 +1,24 @@
 #include "Ant.h"
 
-Ant::Ant(int size)
+
+void Ant::calcAntPath(Graph& graph)
 {
-	vertAvalivle.resize(size, true);
+	_pathLen = 0;
+	for (int i = 0; i < pathHist.size()-1; i++)
+	{
+		_pathLen += graph.adj[pathHist[i]][pathHist[i + 1]];
+	}
+	_pathLen += graph.adj[pathHist.back()][pathHist.front()];
+}
+
+int Ant::getPathLen()
+{
+	return _pathLen;
 }
 
 void Ant::clearMemory()
 {
-	vertAvalivle.clear();
+	_pathLen = 0;
 	pathHist.clear();
 }
 
