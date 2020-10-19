@@ -19,9 +19,10 @@ using namespace std;
 #define defLmin 10
 #define defSpread true
 
+vector<int> doAntCycle(Graph& graph, vector<Ant>& allAnts, double A, double B, double Ro, int Lmin);
+
 void spreadAntsT(vector<Ant>& allAnts, int vertCount);
 void spreadAntsF(vector<Ant>& allAnts, int vertCount);
-
 
 int main()
 {
@@ -33,26 +34,34 @@ int main()
 
 	for (int mainIter = 0; mainIter < defMaxIter; mainIter++)
 	{
-		if(defSpread)
+		auto thisPath = doAntCycle(graph, allAnts, defA, defB, defRo, defLmin);
+	}
+}
+
+
+vector<int> doAntCycle(Graph &graph,vector<Ant> &allAnts,double A,double B,double Ro,int Lmin)
+{
+	if (defSpread)
+	{
+		spreadAntsT(allAnts, graph.size());
+	}
+	else
+	{
+		spreadAntsF(allAnts, graph.size());
+	}
+	for (int antIter = 0; antIter < allAnts.size(); antIter++)
+	{
+		vector<int> avalVert(graph.size(), true);
+		avalVert[allAnts[antIter].pathHist.front()] = false;
+		for (int vertIter = 0; vertIter < graph.size(); vertIter++)
 		{
-			spreadAntsT(allAnts, graph.size());
-		}
-		else
-		{
-			spreadAntsF(allAnts, graph.size());
-		}
-		for (int antIter = 0; antIter < allAnts.size(); antIter++)
-		{
-			vector<int> avalVert(graph.size(), true);
-			avalVert[allAnts[antIter].pathHist.front()] = false;
-			for (int vertIter = 0; vertIter < graph.size(); vertIter++)
-			{
 
 
 
-			}
 		}
 	}
+	//find min
+	//return vector {pathLen,vert1,vert2,...,vertN}
 }
 
 void spreadAntsT(vector<Ant> &allAnts,int vertCount)
