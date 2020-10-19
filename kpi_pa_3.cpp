@@ -51,12 +51,10 @@ vector<int> doAntCycle(Graph &graph,vector<Ant> &allAnts,double A,double B,doubl
 	}
 	for (int antIter = 0; antIter < allAnts.size(); antIter++)
 	{
-		vector<int> avalVert(graph.size(), true);
+		vector<bool> avalVert(graph.size(), true);
 		avalVert[allAnts[antIter].pathHist.front()] = false;
 		for (int vertIter = 0; vertIter < graph.size(); vertIter++)
 		{
-
-
 
 		}
 	}
@@ -86,5 +84,15 @@ void spreadAntsF(vector<Ant>& allAnts, int vertCount)
 	for (int i = 0; i < allAnts.size(); i++)
 	{
 		allAnts[i].pathHist.push_back(a);
+	}
+}
+
+int evalNextVert(Graph graph,int curVert, vector<bool> avalVert,double A,double B)
+{
+	double totalPrice=0;
+	for (int i = 0; i < avalVert.size(); i++)
+	{
+		if(avalVert[i])
+			totalPrice += pow(graph.pheromone[curVert][i], A) * pow((double(1) / double(graph.adj[curVert][i])), B);
 	}
 }
