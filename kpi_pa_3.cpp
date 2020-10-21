@@ -33,8 +33,8 @@ using namespace std;
 #define defRo_best 0.3
 //
 #define defAnt_test1 10
-#define defAnt_test2 200
-#define defAnt_best 5
+#define defAnt_test2 300
+#define defAnt_best 50
 //
 #define defLmin_test1 100
 #define defLmin_test2 5000
@@ -59,6 +59,8 @@ int main()
 {
 	string testOutputFile = "A";
 	srand(time(NULL));
+	//defRequiredLen, defA_best, defB_best, defRo_best, defLmin_best, defAnt_best, defSpread_best
+
 	for (auto testParam = defA_test1; testParam < defA_test2; testParam += defStep)
 	{
 		auto start = chrono::high_resolution_clock::now();
@@ -71,7 +73,7 @@ int main()
 	for (auto testParam = defB_test1; testParam < defB_test2; testParam += defStep)
 	{
 		auto start = chrono::high_resolution_clock::now();
-		int tookIter = findPathUntil(defRequiredLen, testParam, defB_best, defRo_best, defLmin_best, defAnt_best, defSpread_best);
+		int tookIter = findPathUntil(defRequiredLen, defA_best, testParam, defRo_best, defLmin_best, defAnt_best, defSpread_best);
 		auto end = chrono::high_resolution_clock::now();
 		chrono::duration<float> tookTime = end - start;
 		csvWriter(testOutputFile, testParam, make_pair(tookIter, tookTime.count()));
