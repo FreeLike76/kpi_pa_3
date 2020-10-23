@@ -4,7 +4,7 @@
 #include <cmath>
 #include <ctime>
 #include <fstream>
-#include <chrono>
+#include <thread>
 #include "Graph.h"
 #include "Ant.h"
 
@@ -12,9 +12,8 @@ using namespace std;
 
 #define defFile "matrix.txt"
 #define defPheromone 1
-#define defMaxIter 100
+#define defMaxIter 1000
 #define defRequiredLen 1600
-#define defStep 1
 
 //_test1 minValue to test
 //_test2 maxValue to test
@@ -28,17 +27,17 @@ using namespace std;
 #define defB_test2 10
 #define defB_best 3
 //
-#define defRo_test1 0.1
-#define defRo_test2 0.9
+#define defRo_test1 0.0
+#define defRo_test2 1.0
 #define defRo_best 0.3
-//
-#define defAnt_test1 10
-#define defAnt_test2 300
-#define defAnt_best 50
 //
 #define defLmin_test1 100
 #define defLmin_test2 5000
 #define defLmin_best 1000
+//
+#define defAnt_test1 10
+#define defAnt_test2 300
+#define defAnt_best 80
 //
 #define defSpread_test1 false
 #define defSpread_test2 true
@@ -54,30 +53,33 @@ void pheromoneDecay(Graph& graph, double Ro);
 void addPheromone(Graph& graph, vector<Ant>& allAnts, int Lmin);
 void antReset(vector<Ant>& allAnts);
 void csvWriter(string path, double testParam, pair<int, float> details);
+void testA(int start, int end, int step, int _repeat);
+void testB(int start, int end, int step, int _repeat);
+void testRo(double start, double end, double step, int _repeat);
+void testLmin(int start, int end, int step, int _repeat);
+void testAnt(int start, int end, int step, int _repeat);
 
 int main()
 {
-	string testOutputFile = "A";
 	srand(time(NULL));
 	//defRequiredLen, defA_best, defB_best, defRo_best, defLmin_best, defAnt_best, defSpread_best
+	//testA(defA_test1, defA_test2, 1, 3);
+	//testB(defB_test1, defB_test2, 1, 3);
+	//testRo(defRo_test1, defRo_test2, 0.1, 3);
+	//testLmin(defLmin_test1, defLmin_test2, 100, 3);
+	//testAnt(defAnt_test1, defAnt_test2, 10, 3);
 
-	for (auto testParam = defA_test1; testParam < defA_test2; testParam += defStep)
-	{
-		auto start = chrono::high_resolution_clock::now();
-		int tookIter = findPathUntil(defRequiredLen, testParam, defB_best, defRo_best, defLmin_best, defAnt_best, defSpread_best);
-		auto end = chrono::high_resolution_clock::now();
-		chrono::duration<float> tookTime = end - start;
-		csvWriter(testOutputFile, testParam,make_pair(tookIter,tookTime.count()));
-	}
-	testOutputFile = "B";
-	for (auto testParam = defB_test1; testParam < defB_test2; testParam += defStep)
-	{
-		auto start = chrono::high_resolution_clock::now();
-		int tookIter = findPathUntil(defRequiredLen, defA_best, testParam, defRo_best, defLmin_best, defAnt_best, defSpread_best);
-		auto end = chrono::high_resolution_clock::now();
-		chrono::duration<float> tookTime = end - start;
-		csvWriter(testOutputFile, testParam, make_pair(tookIter, tookTime.count()));
-	}
+	//thread A(testA, defA_test1, defA_test2, 1, 3);
+	//thread B(testB, defB_test1, defB_test2, 1, 3);
+	//thread Ro(testRo, defRo_test1, defRo_test2, 0.1, 3);
+	thread Lmin(testLmin, defLmin_test1, defLmin_test2, 100, 1);
+	thread Ant(testAnt, defAnt_test1, defAnt_test2, 10, 3);
+
+	//A.join();
+	//B.join();
+	//Ro.join();
+	Lmin.join();
+	Ant.join();
 }
 
 
@@ -105,9 +107,9 @@ int findPathUntil(int RequiredPath, int A, int B, int Ro, int Lmin, int AntCount
 		}
 		else
 			lock_counter++;
-		if (lock_counter > 20)
+		if (lock_counter > 50)
 			break;
-		cout << "Min Path Len: " << Lcur << endl;
+		cout <<"Id: " <<this_thread::get_id()<<'\t' <<"Path: "<< Lcur << endl;
 		antReset(allAnts);
 		if(Lcur<defRequiredLen)
 		{
@@ -233,7 +235,8 @@ void antReset(vector<Ant> & allAnts)
 
 void csvWriter(string path, double testParam, pair<int, float> details)
 {
-	cout << testParam << '\t' << details.first << '\t' << details.second << endl;
+	cout <<"Id: "<<this_thread::get_id()
+		<<'\t'<<path<<": "<<testParam << "\titer: " << details.first << "\ttime: " << details.second << endl;
 	fstream a;
 	a.open("csvResults\\" + path + "_iter.csv", ios::app);
 	a << testParam << '\t' << details.first << endl;
@@ -242,4 +245,84 @@ void csvWriter(string path, double testParam, pair<int, float> details)
 	a.open("csvResults\\" + path + "_time.csv", ios::app);
 	a << testParam << '\t' << details.second << endl;
 	a.close();
+}
+
+void testA(int start, int end, int step, int _repeat)
+{
+	string testOutputFile = "A";
+	for (int repeat = 0; repeat < _repeat; repeat++)
+	{
+		for (auto testParam = start; testParam <= end; testParam += step)
+		{
+			auto start = chrono::high_resolution_clock::now();
+			int tookIter = findPathUntil(defRequiredLen, testParam, defB_best, defRo_best, defLmin_best, defAnt_best, defSpread_best);
+			auto end = chrono::high_resolution_clock::now();
+			chrono::duration<float> tookTime = end - start;
+			csvWriter(testOutputFile, testParam, make_pair(tookIter, tookTime.count()));
+		}
+	}
+}
+
+void testB(int start, int end, int step, int _repeat)
+{
+	string testOutputFile = "B";
+	for (int repeat = 0; repeat < _repeat; repeat++)
+	{
+		for (auto testParam = start; testParam <= end; testParam += step)
+		{
+			auto start = chrono::high_resolution_clock::now();
+			int tookIter = findPathUntil(defRequiredLen, defA_best, testParam, defRo_best, defLmin_best, defAnt_best, defSpread_best);
+			auto end = chrono::high_resolution_clock::now();
+			chrono::duration<float> tookTime = end - start;
+			csvWriter(testOutputFile, testParam, make_pair(tookIter, tookTime.count()));
+		}
+	}
+}
+
+void testRo(double start, double end, double step, int _repeat)
+{
+	string testOutputFile = "Ro";
+	for (int repeat = 0; repeat < _repeat; repeat++)
+	{
+		for (auto testParam = start; testParam <= end; testParam += step)
+		{
+			auto start = chrono::high_resolution_clock::now();
+			int tookIter = findPathUntil(defRequiredLen, defA_best, defB_best, testParam, defLmin_best, defAnt_best, defSpread_best);
+			auto end = chrono::high_resolution_clock::now();
+			chrono::duration<float> tookTime = end - start;
+			csvWriter(testOutputFile, testParam, make_pair(tookIter, tookTime.count()));
+		}
+	}
+}
+
+void testLmin(int start, int end, int step, int _repeat)
+{
+	string testOutputFile = "Lmin";
+	for (int repeat = 0; repeat < _repeat; repeat++)
+	{
+		for (auto testParam = start; testParam <= end; testParam += step)
+		{
+			auto start = chrono::high_resolution_clock::now();
+			int tookIter = findPathUntil(defRequiredLen, defA_best, defB_best, defRo_best, testParam, defAnt_best, defSpread_best);
+			auto end = chrono::high_resolution_clock::now();
+			chrono::duration<float> tookTime = end - start;
+			csvWriter(testOutputFile, testParam, make_pair(tookIter, tookTime.count()));
+		}
+	}
+}
+
+void testAnt(int start, int end, int step, int _repeat)
+{
+	string testOutputFile = "Ant";
+	for (int repeat = 0; repeat < _repeat; repeat++)
+	{
+		for (auto testParam = start; testParam <= end; testParam += step)
+		{
+			auto start = chrono::high_resolution_clock::now();
+			int tookIter = findPathUntil(defRequiredLen, defA_best, defB_best, defRo_best, defLmin_best, testParam, defSpread_best);
+			auto end = chrono::high_resolution_clock::now();
+			chrono::duration<float> tookTime = end - start;
+			csvWriter(testOutputFile, testParam, make_pair(tookIter, tookTime.count()));
+		}
+	}
 }
