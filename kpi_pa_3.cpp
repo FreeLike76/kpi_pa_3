@@ -69,15 +69,15 @@ int main()
 	//testLmin(defLmin_test1, defLmin_test2, 100, 3);
 	//testAnt(defAnt_test1, defAnt_test2, 10, 3);
 
-	//thread A(testA, defA_test1, defA_test2, 1, 3);
-	//thread B(testB, defB_test1, defB_test2, 1, 3);
-	//thread Ro(testRo, defRo_test1, defRo_test2, 0.1, 3);
-	thread Lmin(testLmin, defLmin_test1, defLmin_test2, 100, 1);
-	thread Ant(testAnt, defAnt_test1, defAnt_test2, 10, 3);
+	thread A(testA, defA_test1, defA_test2, 1, 3);
+	thread B(testB, defB_test1, defB_test2, 1, 3);
+	thread Ro(testRo, defRo_test1, defRo_test2, 0.1, 3);
+	thread Lmin(testLmin, defLmin_test1, defLmin_test2, 100, 3);
+	thread Ant(testAnt, defAnt_test1, defAnt_test2, 10, 1);
 
-	//A.join();
-	//B.join();
-	//Ro.join();
+	A.join();
+	B.join();
+	Ro.join();
 	Lmin.join();
 	Ant.join();
 }
